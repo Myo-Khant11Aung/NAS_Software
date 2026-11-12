@@ -38,29 +38,35 @@ Planned System Architecture
 The system follows a client-server architecture.
 
 A Linux computer acts as the central storage server. Linux, macOS, and Windows clients connect to it through a local network or a secure remote connection.
-              Linux / macOS / Windows Clients
-                         |
-               +---------+---------+
-               |                   |
-          Local Network       Remote Internet
-               |                   |
-               |             Encrypted VPN
-               |              (Tailscale)
-               |                   |
-               +---------+---------+
-                         |
-                    Go NAS Server
-                         |
-          +--------------+--------------+
-          |              |              |
-       Network       Authentication    Storage
-       Handler       & Authorization   Manager
-          |              |              |
-          +--------------+--------------+
-                         |
-                  Linux Filesystem
-                         |
-                      HDD / SSD
+ 
+## System Architecture
+
+```text
+                Linux / macOS / Windows Clients
+                             |
+                   +---------+---------+
+                   |                   |
+              Local Network       Remote Internet
+                   |                   |
+                   |             Encrypted VPN
+                   |              (Tailscale)
+                   |                   |
+                   +---------+---------+
+                             |
+                        Go NAS Server
+                             |
+              +--------------+--------------+
+              |              |              |
+           Network       Authentication    Storage
+           Handler       & Authorization   Manager
+              |              |              |
+              +--------------+--------------+
+                             |
+                      Linux Filesystem
+                             |
+                          HDD / SSD
+```
+
 The Go server will be responsible for network communication, file operations, access control, concurrent request handling, and data integrity.
 
 Linux will provide the underlying operating system and filesystem capabilities.

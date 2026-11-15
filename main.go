@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"io"
 	"net"
 )
 
@@ -21,7 +23,7 @@ func main() {
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
-			fmt.Println("Error accepting client")
+			fmt.Println("Error accepting client: ", err)
 			continue
 		}
 
@@ -35,16 +37,25 @@ func handleClient(conn net.Conn) {
 			fmt.Println("Error closing conn:", err)
 		}
 	}()
-	buffer := make([]byte, 1024)
-	n, err := conn.Read(buffer)
-	if err != nil {
-		fmt.Println("Error reading buffer: ", err)
-		return
-	}
-	fmt.Println(string(buffer[:n]))
-	_, err = conn.Write(buffer[:n])
-	if err != nil {
-		fmt.Println("Error writing data: ", err)
-		return
+
+	reader := bufio.NewReader(conn)
+
+	for {
+		incomingMessage, err := reader.ReadString('\n')
+		if err != nil {
+			if err == io.EOF {
+				fmt.Println("Client disconnected gracefully")
+				return
+			} else {
+				fmt.Println("Reading Error: ", err)
+				return
+			}
+		}
+
+		_, err = conn.Write([]byte(incomingMessage))
+		if err != nil {
+			fmt.Println("Writing err: ", err)
+			return
+		}
 	}
 }
